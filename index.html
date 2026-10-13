@@ -90,13 +90,13 @@
 
     <!-- User profile at bottom -->
     <div class="sidebar__footer">
-      <div class="sidebar__user">
+      <div class="sidebar__user" id="sidebar-user" title="Ver Perfil de Administrador" tabindex="0" role="button">
         <div class="sidebar__avatar">
           <i class="fa-solid fa-user-tie"></i>
         </div>
         <div class="sidebar__user-info">
-          <span class="sidebar__user-name">Admin</span>
-          <span class="sidebar__user-role">Administrador</span>
+          <span class="sidebar__user-name" id="sidebar-user-name">Marcelo Admin</span>
+          <span class="sidebar__user-role" id="sidebar-user-role">Administrador</span>
         </div>
       </div>
     </div>
@@ -132,11 +132,35 @@
           <input type="search" id="topbar-search-input" placeholder="Buscar producto…" autocomplete="off" />
         </div>
 
-        <!-- Notifications -->
-        <button class="topbar__icon-btn" id="notification-btn" aria-label="Notificaciones">
-          <i class="fa-regular fa-bell"></i>
-          <span class="topbar__badge" id="notif-badge">0</span>
-        </button>
+        <!-- Notifications Dropdown Wrapper -->
+        <div class="notif-wrapper" id="notif-wrapper">
+          <button class="topbar__icon-btn" id="notification-btn" aria-label="Notificaciones" title="Ver notificaciones y alertas">
+            <i class="fa-regular fa-bell"></i>
+            <span class="topbar__badge" id="notif-badge">0</span>
+          </button>
+
+          <!-- Dropdown Panel -->
+          <div class="notif-dropdown" id="notif-dropdown" aria-hidden="true">
+            <div class="notif-dropdown__header">
+              <div class="notif-dropdown__title">
+                <i class="fa-solid fa-bell"></i>
+                <span>Notificaciones</span>
+                <span class="notif-dropdown__badge" id="notif-dropdown-count">0</span>
+              </div>
+              <button type="button" class="notif-dropdown__clear" id="notif-clear-btn" title="Limpiar todas las alertas">
+                <i class="fa-solid fa-check-double"></i> Marcar leídas
+              </button>
+            </div>
+            <div class="notif-dropdown__list" id="notif-list">
+              <!-- Renderizado dinámico desde app.js -->
+            </div>
+            <div class="notif-dropdown__footer">
+              <button type="button" class="notif-dropdown__footer-btn" id="notif-view-all">
+                <i class="fa-solid fa-triangle-exclamation"></i> Ver todos los productos con stock bajo
+              </button>
+            </div>
+          </div>
+        </div>
 
         <!-- Date/time -->
         <div class="topbar__datetime">
@@ -144,8 +168,8 @@
           <span id="topbar-date"></span>
         </div>
 
-        <!-- Avatar -->
-        <div class="topbar__avatar">
+        <!-- Avatar (Clickable) -->
+        <div class="topbar__avatar" id="topbar-avatar" title="Mi Perfil de Administrador" tabindex="0" role="button">
           <i class="fa-solid fa-user-tie"></i>
         </div>
       </div>
@@ -347,7 +371,286 @@
         </section>
       </div>
 
-    </main>
+      <!-- ─── VISTA: CATEGORÍAS ─── -->
+      <div class="view" id="view-categories" style="display:none">
+        <div class="view-header">
+          <div>
+            <h2 class="view-header__title">
+              <i class="fa-solid fa-tags"></i>
+              Gestión de Categorías
+            </h2>
+            <p class="view-header__subtitle">Distribución del inventario, unidades y valor económico por departamento</p>
+          </div>
+          <button class="btn btn--primary" id="btn-add-category">
+            <i class="fa-solid fa-plus"></i>
+            Nueva Categoría
+          </button>
+        </div>
+
+        <!-- Categorías KPIs rápidos -->
+        <section class="kpi-grid kpi-grid--3" aria-label="Métricas de categorías">
+          <article class="kpi-card kpi-card--blue">
+            <div class="kpi-card__icon"><i class="fa-solid fa-layer-group"></i></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Total Categorías</span>
+              <span class="kpi-card__value" id="cat-kpi-count">0</span>
+              <span class="kpi-card__sub">departamentos activos</span>
+            </div>
+          </article>
+          <article class="kpi-card kpi-card--teal">
+            <div class="kpi-card__icon"><i class="fa-solid fa-crown"></i></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Categoría Más Valiosa</span>
+              <span class="kpi-card__value" id="cat-kpi-top-value">–</span>
+              <span class="kpi-card__sub" id="cat-kpi-top-value-sub">con mayor capital</span>
+            </div>
+          </article>
+          <article class="kpi-card kpi-card--green">
+            <div class="kpi-card__icon"><i class="fa-solid fa-boxes-packing"></i></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Categoría Mayor Stock</span>
+              <span class="kpi-card__value" id="cat-kpi-top-units">–</span>
+              <span class="kpi-card__sub" id="cat-kpi-top-units-sub">más unidades físicas</span>
+            </div>
+          </article>
+        </section>
+
+        <!-- Grilla de Tarjetas de Categorías -->
+        <div class="categories-grid" id="categories-grid">
+          <!-- Renderizado dinámicamente con app.js -->
+        </div>
+      </div>
+
+      <!-- ─── VISTA: REPORTES ─── -->
+      <div class="view" id="view-reports" style="display:none">
+        <div class="view-header">
+          <div>
+            <h2 class="view-header__title">
+              <i class="fa-solid fa-chart-pie"></i>
+              Reportes y Métricas del Inventario
+            </h2>
+            <p class="view-header__subtitle">Análisis financiero, salud de stock y rotación de productos</p>
+          </div>
+          <div class="view-header__actions">
+            <button class="btn btn--ghost" id="btn-print-report" title="Imprimir reporte actual">
+              <i class="fa-solid fa-print"></i> Imprimir Reporte
+            </button>
+            <button class="btn btn--primary" id="btn-export-reports" title="Exportar métricas completas a CSV">
+              <i class="fa-solid fa-file-arrow-down"></i> Exportar Análisis
+            </button>
+          </div>
+        </div>
+
+        <!-- Métricas Analíticas -->
+        <section class="kpi-grid" aria-label="Indicadores analíticos">
+          <article class="kpi-card kpi-card--blue">
+            <div class="kpi-card__icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Precio Promedio</span>
+              <span class="kpi-card__value" id="rep-kpi-avg-price">$0</span>
+              <span class="kpi-card__sub">por producto en catálogo</span>
+            </div>
+          </article>
+          <article class="kpi-card kpi-card--teal">
+            <div class="kpi-card__icon"><i class="fa-solid fa-gem"></i></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Mayor Inversión</span>
+              <span class="kpi-card__value" id="rep-kpi-top-product">–</span>
+              <span class="kpi-card__sub" id="rep-kpi-top-product-sub">producto líder en valor</span>
+            </div>
+          </article>
+          <article class="kpi-card kpi-card--green">
+            <div class="kpi-card__icon"><i class="fa-solid fa-heart-pulse"></i></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Salud del Inventario</span>
+              <span class="kpi-card__value" id="rep-kpi-health">100%</span>
+              <span class="kpi-card__sub">productos con stock normal</span>
+            </div>
+          </article>
+          <article class="kpi-card kpi-card--red">
+            <div class="kpi-card__icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">En Riesgo</span>
+              <span class="kpi-card__value" id="rep-kpi-risk-count">0</span>
+              <span class="kpi-card__sub">productos bajo umbral</span>
+            </div>
+          </article>
+        </section>
+
+        <!-- Bloques Gráficos / Tablas Analíticas -->
+        <div class="reports-grid">
+          <!-- Distribución por Categoría -->
+          <div class="report-panel">
+            <div class="report-panel__header">
+              <h3 class="report-panel__title">
+                <i class="fa-solid fa-chart-column"></i>
+                Capital por Categoría
+              </h3>
+              <span class="report-panel__tag">Valor Económico</span>
+            </div>
+            <div class="report-panel__body" id="rep-category-bars">
+              <!-- Renderizado dinámicamente con app.js -->
+            </div>
+          </div>
+
+          <!-- Top 5 Productos con Mayor Valor -->
+          <div class="report-panel">
+            <div class="report-panel__header">
+              <h3 class="report-panel__title">
+                <i class="fa-solid fa-ranking-star"></i>
+                Top 5 Productos de Mayor Valor
+              </h3>
+              <span class="report-panel__tag">Ranking</span>
+            </div>
+            <div class="report-panel__body">
+              <ul class="ranking-list" id="rep-top-products-list">
+                <!-- Renderizado dinámicamente con app.js -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- Semáforo de Urgencia de Reposición -->
+          <div class="report-panel report-panel--full">
+            <div class="report-panel__header">
+              <h3 class="report-panel__title text--danger">
+                <i class="fa-solid fa-siren-on"></i>
+                Prioridad de Reposición (Stock Crítico)
+              </h3>
+              <span class="report-panel__tag report-panel__tag--danger">Atención Inmediata</span>
+            </div>
+            <div class="report-panel__body" id="rep-restock-panel">
+              <!-- Renderizado dinámicamente con app.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── VISTA: CONFIGURACIÓN ─── -->
+      <div class="view" id="view-settings" style="display:none">
+        <div class="view-header">
+          <div>
+            <h2 class="view-header__title">
+              <i class="fa-solid fa-gear"></i>
+              Configuración del Sistema
+            </h2>
+            <p class="view-header__subtitle">Ajustá parámetros operativos, alertas, moneda y respaldo de datos</p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <!-- Tarjeta 1: Parámetros del Negocio -->
+          <div class="settings-card">
+            <div class="settings-card__header">
+              <div class="settings-card__icon"><i class="fa-solid fa-sliders"></i></div>
+              <div>
+                <h3 class="settings-card__title">Parámetros Operativos</h3>
+                <p class="settings-card__subtitle">Configurá cómo se calculan las alertas y visualización</p>
+              </div>
+            </div>
+            <form id="settings-form" class="settings-card__body">
+              <div class="form-group">
+                <label for="setting-company-name" class="form-label">
+                  <i class="fa-solid fa-building"></i> Nombre de la Empresa / Depósito
+                </label>
+                <input type="text" id="setting-company-name" class="form-input" value="StockPro San Luis" />
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="setting-low-threshold" class="form-label">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Umbral Alerta Stock Bajo
+                  </label>
+                  <input type="number" id="setting-low-threshold" class="form-input" min="1" max="100" value="5" />
+                  <span class="form-hint">Productos con cantidad menor a este número activarán alertas.</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="setting-currency" class="form-label">
+                    <i class="fa-solid fa-dollar-sign"></i> Símbolo de Moneda
+                  </label>
+                  <div class="form-select-wrap">
+                    <select id="setting-currency" class="form-input form-select">
+                      <option value="$">$ (Dólar / Pesos)</option>
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR (€)</option>
+                      <option value="ARS">ARS ($)</option>
+                      <option value="MXN">MXN ($)</option>
+                      <option value="CLP">CLP ($)</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down form-select-arrow"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="setting-show-banner" checked />
+                  <span>Mostrar banner superior cuando haya productos con stock crítico</span>
+                </label>
+              </div>
+
+              <div class="settings-card__actions">
+                <button type="submit" class="btn btn--primary">
+                  <i class="fa-solid fa-floppy-disk"></i> Guardar Parámetros
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Tarjeta 2: Respaldo y Gestión de Datos -->
+          <div class="settings-card">
+            <div class="settings-card__header">
+              <div class="settings-card__icon"><i class="fa-solid fa-database"></i></div>
+              <div>
+                <h3 class="settings-card__title">Copia de Seguridad y Base de Datos</h3>
+                <p class="settings-card__subtitle">Exportá, importá o restaurá todo el catálogo en LocalStorage</p>
+              </div>
+            </div>
+            <div class="settings-card__body">
+              <div class="backup-action-item">
+                <div>
+                  <strong>Exportar Copia de Seguridad (JSON)</strong>
+                  <p class="form-hint">Descarga un archivo con todos los productos, categorías y ajustes.</p>
+                </div>
+                <button type="button" class="btn btn--ghost" id="btn-backup-export">
+                  <i class="fa-solid fa-download"></i> Descargar JSON
+                </button>
+              </div>
+
+              <div class="backup-action-item">
+                <div>
+                  <strong>Importar Copia de Seguridad (JSON)</strong>
+                  <p class="form-hint">Carga un archivo de respaldo previamente exportado.</p>
+                </div>
+                <label class="btn btn--ghost">
+                  <i class="fa-solid fa-upload"></i> Subir JSON
+                  <input type="file" id="input-backup-import" accept=".json" style="display:none" />
+                </label>
+              </div>
+
+              <div class="backup-action-item">
+                <div>
+                  <strong>Restaurar Datos Iniciales Demo</strong>
+                  <p class="form-hint">Vuelve a cargar los 8 productos de muestra con stock representativo.</p>
+                </div>
+                <button type="button" class="btn btn--ghost" id="btn-settings-reset-demo">
+                  <i class="fa-solid fa-rotate-right"></i> Restaurar Demo
+                </button>
+              </div>
+
+              <div class="backup-action-item backup-action-item--danger">
+                <div>
+                  <strong class="text--danger">Vaciar Base de Datos Completa</strong>
+                  <p class="form-hint">Elimina todos los productos registrados del almacenamiento local.</p>
+                </div>
+                <button type="button" class="btn btn--danger" id="btn-clear-all-data">
+                  <i class="fa-solid fa-trash-can"></i> Vaciar Inventario
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
   </div>
 
   <!-- ════════════════════════════════════════
@@ -530,6 +833,155 @@
         <button class="btn btn--ghost" id="confirm-cancel">Cancelar</button>
         <button class="btn btn--danger" id="confirm-delete">
           <i class="fa-solid fa-trash-can"></i> Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       MODAL DE PERFIL DE ADMINISTRADOR
+  ════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="profile-backdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+    <div class="modal" id="profile-modal">
+      <div class="modal__header">
+        <div class="modal__header-left">
+          <div class="modal__header-icon">
+            <i class="fa-solid fa-user-gear"></i>
+          </div>
+          <div>
+            <h2 class="modal__title" id="profile-title">Perfil de Administrador</h2>
+            <p class="modal__subtitle">Información del usuario y permisos de control</p>
+          </div>
+        </div>
+        <button class="modal__close" id="profile-close" aria-label="Cerrar modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal__body">
+        <div class="profile-card">
+          <div class="profile-card__avatar-wrap">
+            <div class="profile-card__avatar">
+              <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <span class="profile-card__status" title="Conectado"></span>
+          </div>
+          <div class="profile-card__info">
+            <h3 class="profile-card__name" id="profile-display-name">Marcelo Admin</h3>
+            <span class="profile-card__badge"><i class="fa-solid fa-shield-halved"></i> Super Administrador</span>
+            <p class="profile-card__meta">Acceso Total • Sesión Activa</p>
+          </div>
+        </div>
+
+        <form id="profile-form">
+          <div class="form-grid">
+            <div class="form-group form-group--full">
+              <label for="profile-name-input" class="form-label">
+                <i class="fa-solid fa-user"></i> Nombre Completo
+              </label>
+              <input type="text" id="profile-name-input" class="form-input" value="Marcelo Admin" required />
+            </div>
+
+            <div class="form-group form-group--full">
+              <label for="profile-email-input" class="form-label">
+                <i class="fa-solid fa-envelope"></i> Correo Electrónico
+              </label>
+              <input type="email" id="profile-email-input" class="form-input" value="admin@stockpro.io" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fa-solid fa-id-badge"></i> Rol Asignado
+              </label>
+              <input type="text" class="form-input" value="Administrador General" readonly disabled />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fa-solid fa-clock"></i> Último Inicio
+              </label>
+              <input type="text" id="profile-last-login" class="form-input" readonly disabled />
+            </div>
+          </div>
+
+          <div class="permissions-box">
+            <span class="permissions-box__title"><i class="fa-solid fa-key"></i> Permisos Concedidos:</span>
+            <div class="permissions-tags">
+              <span class="perm-tag"><i class="fa-solid fa-check"></i> Crear / Editar Productos</span>
+              <span class="perm-tag"><i class="fa-solid fa-check"></i> Eliminar Registros</span>
+              <span class="perm-tag"><i class="fa-solid fa-check"></i> Exportar e Importar</span>
+              <span class="perm-tag"><i class="fa-solid fa-check"></i> Ajustes de Sistema</span>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost btn--danger-ghost" id="btn-logout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
+        </button>
+        <button type="button" class="btn btn--primary" id="btn-save-profile">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       MODAL DE NUEVA CATEGORÍA
+  ════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="category-modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal modal--sm" id="category-modal">
+      <div class="modal__header">
+        <div class="modal__header-left">
+          <div class="modal__header-icon">
+            <i class="fa-solid fa-tags"></i>
+          </div>
+          <div>
+            <h2 class="modal__title">Nueva Categoría</h2>
+            <p class="modal__subtitle">Registrá un nuevo departamento en el catálogo</p>
+          </div>
+        </div>
+        <button class="modal__close" id="category-modal-close" aria-label="Cerrar modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal__body">
+        <form id="category-form">
+          <div class="form-group">
+            <label for="new-cat-name" class="form-label">
+              <i class="fa-solid fa-tag"></i> Nombre de la Categoría <span class="required">*</span>
+            </label>
+            <input type="text" id="new-cat-name" class="form-input" placeholder="Ej: Audio y Sonido" required />
+            <span class="form-error" id="err-cat-name"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="new-cat-icon" class="form-label">
+              <i class="fa-solid fa-icons"></i> Ícono Representativo
+            </label>
+            <div class="form-select-wrap">
+              <select id="new-cat-icon" class="form-input form-select">
+                <option value="fa-boxes-stacked">📦 Cajas / General</option>
+                <option value="fa-headphones">🎧 Audio y Sonido</option>
+                <option value="fa-camera">📷 Fotografía</option>
+                <option value="fa-plug">🔌 Cables y Energía</option>
+                <option value="fa-car">🚗 Automotor</option>
+                <option value="fa-shirt">👕 Indumentaria</option>
+                <option value="fa-utensils">🍴 Gastronomía</option>
+                <option value="fa-shield-halved">🛡️ Seguridad</option>
+              </select>
+              <i class="fa-solid fa-chevron-down form-select-arrow"></i>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" id="category-modal-cancel">Cancelar</button>
+        <button type="button" class="btn btn--primary" id="category-modal-save">
+          <i class="fa-solid fa-plus"></i> Crear Categoría
         </button>
       </div>
     </div>
