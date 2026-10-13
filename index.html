@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="StockPro – Panel de Control de Stock e Inventario. Gestión profesional de productos, categorías y alertas en tiempo real." />
+  <meta name="author" content="StockPro Dashboard" />
+  <title>StockPro – Panel de Control de Inventario</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+  <!-- ════════════════════════════════════════
+       SIDEBAR
+  ════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Logo -->
+    <div class="sidebar__logo">
+      <div class="sidebar__logo-icon">
+        <i class="fa-solid fa-boxes-stacked"></i>
+      </div>
+      <div class="sidebar__logo-text">
+        <span class="sidebar__brand">StockPro</span>
+        <span class="sidebar__version">v2.0</span>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar__nav">
+      <span class="sidebar__nav-label">PRINCIPAL</span>
+      <ul class="sidebar__menu">
+        <li class="sidebar__item sidebar__item--active" id="nav-dashboard">
+          <a href="#" class="sidebar__link">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar__item" id="nav-inventory">
+          <a href="#" class="sidebar__link">
+            <i class="fa-solid fa-warehouse"></i>
+            <span>Inventario</span>
+          </a>
+        </li>
+        <li class="sidebar__item" id="nav-alerts">
+          <a href="#" class="sidebar__link">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Alertas</span>
+            <span class="sidebar__badge" id="sidebar-alert-count">0</span>
+          </a>
+        </li>
+      </ul>
+
+      <span class="sidebar__nav-label">DATOS</span>
+      <ul class="sidebar__menu">
+        <li class="sidebar__item" id="nav-categories">
+          <a href="#" class="sidebar__link">
+            <i class="fa-solid fa-tags"></i>
+            <span>Categorías</span>
+          </a>
+        </li>
+        <li class="sidebar__item" id="nav-reports">
+          <a href="#" class="sidebar__link">
+            <i class="fa-solid fa-chart-bar"></i>
+            <span>Reportes</span>
+          </a>
+        </li>
+      </ul>
+
+      <span class="sidebar__nav-label">SISTEMA</span>
+      <ul class="sidebar__menu">
+        <li class="sidebar__item" id="nav-settings">
+          <a href="#" class="sidebar__link">
+            <i class="fa-solid fa-gear"></i>
+            <span>Configuración</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- User profile at bottom -->
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar">
+          <i class="fa-solid fa-user-tie"></i>
+        </div>
+        <div class="sidebar__user-info">
+          <span class="sidebar__user-name">Admin</span>
+          <span class="sidebar__user-role">Administrador</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ════════════════════════════════════════
+       MAIN LAYOUT
+  ════════════════════════════════════════ -->
+  <div class="main-layout" id="main-layout">
+
+    <!-- ── HEADER ── -->
+    <header class="topbar" id="topbar">
+      <!-- Toggle sidebar (mobile) -->
+      <button class="topbar__toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <!-- Page title -->
+      <div class="topbar__title">
+        <h1 id="page-title">Dashboard</h1>
+        <nav class="topbar__breadcrumb" aria-label="breadcrumb">
+          <span>StockPro</span>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span id="breadcrumb-current">Dashboard</span>
+        </nav>
+      </div>
+
+      <!-- Right actions -->
+      <div class="topbar__right">
+        <!-- Search quick -->
+        <div class="topbar__search" id="topbar-search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="search" id="topbar-search-input" placeholder="Buscar producto…" autocomplete="off" />
+        </div>
+
+        <!-- Notifications -->
+        <button class="topbar__icon-btn" id="notification-btn" aria-label="Notificaciones">
+          <i class="fa-regular fa-bell"></i>
+          <span class="topbar__badge" id="notif-badge">0</span>
+        </button>
+
+        <!-- Date/time -->
+        <div class="topbar__datetime">
+          <i class="fa-regular fa-calendar"></i>
+          <span id="topbar-date"></span>
+        </div>
+
+        <!-- Avatar -->
+        <div class="topbar__avatar">
+          <i class="fa-solid fa-user-tie"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── MAIN CONTENT ── -->
+    <main class="content" id="content">
+
+      <!-- ─── VISTA: DASHBOARD / INVENTARIO ─── -->
+      <div class="view" id="view-dashboard">
+
+        <!-- KPI Cards -->
+        <section class="kpi-grid" aria-label="Indicadores de inventario">
+
+          <article class="kpi-card kpi-card--blue" id="kpi-total-products">
+            <div class="kpi-card__icon">
+              <i class="fa-solid fa-box-open"></i>
+            </div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Total Productos</span>
+              <span class="kpi-card__value" id="kpi-products-val">0</span>
+              <span class="kpi-card__sub">registrados en sistema</span>
+            </div>
+            <div class="kpi-card__trend kpi-card__trend--up">
+              <i class="fa-solid fa-arrow-trend-up"></i> 100%
+            </div>
+          </article>
+
+          <article class="kpi-card kpi-card--teal" id="kpi-total-units">
+            <div class="kpi-card__icon">
+              <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Unidades Totales</span>
+              <span class="kpi-card__value" id="kpi-units-val">0</span>
+              <span class="kpi-card__sub">en inventario actual</span>
+            </div>
+            <div class="kpi-card__trend kpi-card__trend--up">
+              <i class="fa-solid fa-arrow-trend-up"></i> Stock
+            </div>
+          </article>
+
+          <article class="kpi-card kpi-card--red" id="kpi-low-stock">
+            <div class="kpi-card__icon">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Alertas Stock Bajo</span>
+              <span class="kpi-card__value" id="kpi-alerts-val">0</span>
+              <span class="kpi-card__sub">productos bajo mínimo</span>
+            </div>
+            <div class="kpi-card__trend kpi-card__trend--down" id="kpi-alert-trend">
+              <i class="fa-solid fa-circle-exclamation"></i> Atención
+            </div>
+          </article>
+
+          <article class="kpi-card kpi-card--green" id="kpi-total-value">
+            <div class="kpi-card__icon">
+              <i class="fa-solid fa-dollar-sign"></i>
+            </div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Valor del Inventario</span>
+              <span class="kpi-card__value" id="kpi-value-val">$0</span>
+              <span class="kpi-card__sub">precio unitario × cantidad</span>
+            </div>
+            <div class="kpi-card__trend kpi-card__trend--up">
+              <i class="fa-solid fa-arrow-trend-up"></i> Total
+            </div>
+          </article>
+
+        </section>
+
+        <!-- Alert Banner (solo visible si hay alertas) -->
+        <div class="alert-banner" id="alert-banner" style="display:none">
+          <i class="fa-solid fa-siren-on"></i>
+          <p><strong>¡Atención!</strong> Hay <span id="alert-count-inline">0</span> producto(s) con stock crítico (menos de 5 unidades). Revisá la tabla para más detalles.</p>
+          <button class="alert-banner__close" id="alert-banner-close" aria-label="Cerrar alerta">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- ─── Tabla de Inventario ─── -->
+        <section class="table-section">
+
+          <!-- Barra de acciones / filtros -->
+          <div class="table-section__toolbar">
+            <div class="toolbar__left">
+              <h2 class="table-section__title">
+                <i class="fa-solid fa-table-list"></i>
+                Inventario de Productos
+              </h2>
+              <span class="table-section__count" id="table-count">0 productos</span>
+            </div>
+
+            <div class="toolbar__right">
+              <!-- Search -->
+              <div class="toolbar__search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                  type="search"
+                  id="search-input"
+                  class="toolbar__search-input"
+                  placeholder="Buscar por nombre…"
+                  autocomplete="off"
+                />
+                <button class="toolbar__search-clear" id="search-clear" style="display:none" aria-label="Limpiar">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <!-- Category filter -->
+              <div class="toolbar__filter">
+                <i class="fa-solid fa-filter"></i>
+                <select id="category-filter" class="toolbar__select">
+                  <option value="">Todas las categorías</option>
+                  <option value="Electrónica">Electrónica</option>
+                  <option value="Herramientas">Herramientas</option>
+                  <option value="Insumos">Insumos</option>
+                  <option value="Mobiliario">Mobiliario</option>
+                  <option value="Informática">Informática</option>
+                  <option value="Limpieza">Limpieza</option>
+                  <option value="Otros">Otros</option>
+                </select>
+              </div>
+
+              <!-- Stock filter -->
+              <div class="toolbar__filter">
+                <select id="stock-filter" class="toolbar__select">
+                  <option value="">Todo el stock</option>
+                  <option value="low">Stock Bajo (&lt;5)</option>
+                  <option value="ok">En Stock (≥5)</option>
+                </select>
+              </div>
+
+              <!-- Add product -->
+              <button class="btn btn--primary" id="btn-add-product">
+                <i class="fa-solid fa-plus"></i>
+                Nuevo Producto
+              </button>
+            </div>
+          </div>
+
+          <!-- Table wrapper -->
+          <div class="table-wrapper">
+            <table class="inventory-table" id="inventory-table" role="table">
+              <thead>
+                <tr>
+                  <th class="th--id sortable" data-col="id" aria-sort="ascending">
+                    ID <i class="fa-solid fa-sort"></i>
+                  </th>
+                  <th class="sortable" data-col="name">
+                    Producto <i class="fa-solid fa-sort"></i>
+                  </th>
+                  <th class="sortable" data-col="category">
+                    Categoría <i class="fa-solid fa-sort"></i>
+                  </th>
+                  <th class="th--center sortable" data-col="quantity">
+                    Stock <i class="fa-solid fa-sort"></i>
+                  </th>
+                  <th class="th--center sortable" data-col="price">
+                    Precio Unit. <i class="fa-solid fa-sort"></i>
+                  </th>
+                  <th class="th--center">Valor Total</th>
+                  <th class="th--center">Estado</th>
+                  <th class="th--center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+                <!-- JS renderizará aquí -->
+              </tbody>
+            </table>
+
+            <!-- Empty state -->
+            <div class="table-empty" id="table-empty" style="display:none">
+              <div class="table-empty__icon">
+                <i class="fa-solid fa-box-open"></i>
+              </div>
+              <h3>Sin resultados</h3>
+              <p id="empty-message">No hay productos que coincidan con tu búsqueda.</p>
+              <button class="btn btn--ghost" id="btn-clear-filters">
+                <i class="fa-solid fa-rotate-left"></i> Limpiar filtros
+              </button>
+            </div>
+          </div>
+
+          <!-- Table footer / pagination info -->
+          <div class="table-footer">
+            <span id="table-showing">Mostrando 0 de 0 productos</span>
+            <div class="table-footer__actions">
+              <button class="btn btn--ghost btn--sm" id="btn-export" title="Exportar datos a CSV">
+                <i class="fa-solid fa-file-csv"></i> Exportar CSV
+              </button>
+              <button class="btn btn--ghost btn--sm btn--danger-ghost" id="btn-reset-data" title="Reiniciar datos de ejemplo">
+                <i class="fa-solid fa-rotate-right"></i> Reiniciar Demo
+              </button>
+            </div>
+          </div>
+
+        </section>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       MODAL – AGREGAR / EDITAR PRODUCTO
+  ════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal" id="product-modal">
+
+      <!-- Modal Header -->
+      <div class="modal__header">
+        <div class="modal__header-left">
+          <div class="modal__header-icon">
+            <i class="fa-solid fa-box" id="modal-header-icon"></i>
+          </div>
+          <div>
+            <h2 class="modal__title" id="modal-title">Nuevo Producto</h2>
+            <p class="modal__subtitle" id="modal-subtitle">Completá los datos para agregar al inventario</p>
+          </div>
+        </div>
+        <button class="modal__close" id="modal-close" aria-label="Cerrar modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal__body">
+        <form id="product-form" novalidate>
+          <input type="hidden" id="product-id" />
+
+          <div class="form-grid">
+
+            <!-- Nombre -->
+            <div class="form-group form-group--full">
+              <label for="field-name" class="form-label">
+                <i class="fa-solid fa-tag"></i>
+                Nombre del producto <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="field-name"
+                class="form-input"
+                placeholder="Ej: Laptop HP ProBook 450"
+                maxlength="80"
+                required
+                autocomplete="off"
+              />
+              <span class="form-error" id="err-name"></span>
+            </div>
+
+            <!-- Categoría -->
+            <div class="form-group">
+              <label for="field-category" class="form-label">
+                <i class="fa-solid fa-folder-open"></i>
+                Categoría <span class="required">*</span>
+              </label>
+              <div class="form-select-wrap">
+                <select id="field-category" class="form-input form-select" required>
+                  <option value="" disabled selected>Seleccioná una categoría…</option>
+                  <option value="Electrónica">Electrónica</option>
+                  <option value="Herramientas">Herramientas</option>
+                  <option value="Insumos">Insumos</option>
+                  <option value="Mobiliario">Mobiliario</option>
+                  <option value="Informática">Informática</option>
+                  <option value="Limpieza">Limpieza</option>
+                  <option value="Otros">Otros</option>
+                </select>
+                <i class="fa-solid fa-chevron-down form-select-arrow"></i>
+              </div>
+              <span class="form-error" id="err-category"></span>
+            </div>
+
+            <!-- Cantidad -->
+            <div class="form-group">
+              <label for="field-quantity" class="form-label">
+                <i class="fa-solid fa-cubes"></i>
+                Cantidad (Unidades) <span class="required">*</span>
+              </label>
+              <div class="form-number-wrap">
+                <button type="button" class="form-number-btn" id="qty-minus" aria-label="Disminuir">
+                  <i class="fa-solid fa-minus"></i>
+                </button>
+                <input
+                  type="number"
+                  id="field-quantity"
+                  class="form-input form-number"
+                  placeholder="0"
+                  min="0"
+                  max="99999"
+                  value="1"
+                  required
+                />
+                <button type="button" class="form-number-btn" id="qty-plus" aria-label="Aumentar">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+              <span class="form-error" id="err-quantity"></span>
+            </div>
+
+            <!-- Precio -->
+            <div class="form-group">
+              <label for="field-price" class="form-label">
+                <i class="fa-solid fa-dollar-sign"></i>
+                Precio Unitario ($) <span class="required">*</span>
+              </label>
+              <div class="form-input-wrap">
+                <span class="form-prefix">$</span>
+                <input
+                  type="number"
+                  id="field-price"
+                  class="form-input form-input--prefixed"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  required
+                />
+              </div>
+              <span class="form-error" id="err-price"></span>
+            </div>
+
+            <!-- Descripción (opcional) -->
+            <div class="form-group form-group--full">
+              <label for="field-desc" class="form-label">
+                <i class="fa-regular fa-message"></i>
+                Descripción <span class="optional">(opcional)</span>
+              </label>
+              <textarea
+                id="field-desc"
+                class="form-input form-textarea"
+                placeholder="Descripción breve del producto, modelo, especificaciones…"
+                rows="3"
+                maxlength="200"
+              ></textarea>
+              <span class="form-char-count"><span id="desc-count">0</span>/200</span>
+            </div>
+
+          </div>
+
+          <!-- Preview de estado -->
+          <div class="modal__preview" id="modal-preview">
+            <div class="modal__preview-label">Vista previa del estado:</div>
+            <div id="modal-preview-badge">–</div>
+            <div class="modal__preview-value" id="modal-preview-value">Valor total: $0.00</div>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" id="modal-cancel">
+          <i class="fa-solid fa-xmark"></i> Cancelar
+        </button>
+        <button type="button" class="btn btn--primary" id="modal-save">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span id="modal-save-text">Guardar Producto</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       MODAL DE CONFIRMACIÓN (ELIMINAR)
+  ════════════════════════════════════════ -->
+  <div class="modal-backdrop modal-backdrop--danger" id="confirm-backdrop" aria-hidden="true">
+    <div class="modal modal--sm" id="confirm-modal">
+      <div class="modal__header modal__header--danger">
+        <div class="modal__header-icon modal__header-icon--danger">
+          <i class="fa-solid fa-trash-can"></i>
+        </div>
+        <h2 class="modal__title">Eliminar Producto</h2>
+        <button class="modal__close" id="confirm-close" aria-label="Cerrar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal__body modal__body--center">
+        <p>¿Estás seguro que querés eliminar <strong id="confirm-product-name"></strong>?</p>
+        <p class="text-muted">Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost" id="confirm-cancel">Cancelar</button>
+        <button class="btn btn--danger" id="confirm-delete">
+          <i class="fa-solid fa-trash-can"></i> Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TOAST NOTIFICATIONS
+  ════════════════════════════════════════ -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
